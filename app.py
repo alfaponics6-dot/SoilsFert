@@ -531,43 +531,43 @@ class EnhancedLimeCalculator:
             'porosity_fraction': round(porosity_percent / 100, 3)
         }
     
-@staticmethod
-def calculate_soil_volume_and_mass(land_area_ha, depth_cm, bulk_density_g_cm3):
-    """
-    Calculate soil volume and mass for lime application - CORRECTED
-    
-    Args:
-        land_area_ha (float): Land area in hectares
-        depth_cm (float): Soil depth in centimeters
-        bulk_density_g_cm3 (float): Bulk density in g/cm³
-    
-    Returns:
-        dict: Volume and mass calculations
-    """
-    # Convert units
-    depth_m = depth_cm / 100  # cm to m
-    
-    # Calculate volume per hectare (1 hectare = 10,000 m²)
-    soil_volume_m3_per_ha = 10000 * depth_m  # m³/ha
-    soil_volume_m3_total = soil_volume_m3_per_ha * land_area_ha  # m³ total
-    
-    # Calculate mass
-    bulk_density_kg_m3 = bulk_density_g_cm3 * 1000  # Convert g/cm³ to kg/m³
-    soil_mass_kg_per_ha = soil_volume_m3_per_ha * bulk_density_kg_m3  # kg/ha
-    soil_mass_mg_per_ha = soil_mass_kg_per_ha / 1000  # Mg/ha (tonnes/ha)
-    soil_mass_total_mg = soil_mass_mg_per_ha * land_area_ha  # Mg total
-    
-    return {
-        'land_area_ha': land_area_ha,
-        'land_area_m2': land_area_ha * 10000,
-        'depth_cm': depth_cm,
-        'depth_m': depth_m,
-        'soil_volume_m3_per_ha': round(soil_volume_m3_per_ha, 0),
-        'soil_volume_m3_total': round(soil_volume_m3_total, 0),
-        'soil_mass_kg_per_ha': round(soil_mass_kg_per_ha, 0),
-        'soil_mass_mg_per_ha': round(soil_mass_mg_per_ha, 1),
-        'soil_mass_total_mg': round(soil_mass_total_mg, 1)
-    }
+    @staticmethod
+    def calculate_soil_volume_and_mass(land_area_ha, depth_cm, bulk_density_g_cm3):
+        """
+        Calculate soil volume and mass for lime application - CORRECTED
+        
+        Args:
+            land_area_ha (float): Land area in hectares
+            depth_cm (float): Soil depth in centimeters
+            bulk_density_g_cm3 (float): Bulk density in g/cm³
+        
+        Returns:
+            dict: Volume and mass calculations
+        """
+        # Convert units
+        depth_m = depth_cm / 100  # cm to m
+        
+        # Calculate volume per hectare (1 hectare = 10,000 m²)
+        soil_volume_m3_per_ha = 10000 * depth_m  # m³/ha
+        soil_volume_m3_total = soil_volume_m3_per_ha * land_area_ha  # m³ total
+        
+        # Calculate mass
+        bulk_density_kg_m3 = bulk_density_g_cm3 * 1000  # Convert g/cm³ to kg/m³
+        soil_mass_kg_per_ha = soil_volume_m3_per_ha * bulk_density_kg_m3  # kg/ha
+        soil_mass_mg_per_ha = soil_mass_kg_per_ha / 1000  # Mg/ha (tonnes/ha)
+        soil_mass_total_mg = soil_mass_mg_per_ha * land_area_ha  # Mg total
+        
+        return {
+            'land_area_ha': land_area_ha,
+            'land_area_m2': land_area_ha * 10000,
+            'depth_cm': depth_cm,
+            'depth_m': depth_m,
+            'soil_volume_m3_per_ha': round(soil_volume_m3_per_ha, 0),
+            'soil_volume_m3_total': round(soil_volume_m3_total, 0),
+            'soil_mass_kg_per_ha': round(soil_mass_kg_per_ha, 0),
+            'soil_mass_mg_per_ha': round(soil_mass_mg_per_ha, 1),
+            'soil_mass_total_mg': round(soil_mass_total_mg, 1)
+        }
     
     @staticmethod
     def calculate_enhanced_lime_requirement(exchangeable_acidity, lime_type='caco3', target_ae=0.5,
@@ -767,6 +767,40 @@ def calculate_soil_volume_and_mass(land_area_ha, depth_cm, bulk_density_g_cm3):
                 'product_ecce': product_ecce
             }
         }
+
+
+# Example usage and testing
+if __name__ == "__main__":
+    # Test the calculator
+    calc = EnhancedLimeCalculator()
+    
+    # Example calculation
+    result = calc.calculate_enhanced_lime_requirement(
+        exchangeable_acidity=2.5,
+        lime_type='caco3',
+        target_ae=0.5,
+        land_area_ha=5.0,
+        depth_cm=20.0,
+        bulk_density_g_cm3=1.3,
+        product_ecce=95.0
+    )
+    
+    print("🧮 Enhanced Lime Calculator Results:")
+    print(f"Lime needed: {result['lime_needed_kg_ha']} kg/ha ({result['lime_needed_t_ha']} t/ha)")
+    print(f"Total for {result['land_area_ha']} ha: {result['lime_needed_kg_total']} kg ({result['lime_needed_t_total']} t)")
+    print(f"Lime type: {result['lime_name']}")
+    print(f"Message: {result['message']}")
+    
+    # Compare all lime types
+    comparison = calc.compare_all_lime_types(
+        exchangeable_acidity=2.5,
+        target_ae=0.5,
+        land_area_ha=5.0
+    )
+    
+    print("\n🔍 Comparison of All Lime Types:")
+    for lime_type, data in comparison['lime_types'].items():
+        print(f"{data['name']}: {data['kg_ha']} kg/ha ({data['t_ha']} t/ha) - {data['speed']} acting")
 # =====================================
 # 💊 COMPREHENSIVE FERTILIZER CALCULATION ENGINE WITH ALL NUTRIENTS
 # =====================================
@@ -3497,7 +3531,7 @@ LANDING_PAGE_TEMPLATE = '''
                     Advanced Scientific Features
                 </h2>
                 <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-                    Professional-grade soil analysis tools powered by cutting-edge AI and scientific methods
+                    Soil analisis driven by rigorous scientific methodology
                 </p>
             </div>
 
@@ -5186,7 +5220,7 @@ ENHANCED_DASHBOARD_TEMPLATE = '''
                                 </div>
                                 <div>
                                     <h4 class="text-lg font-semibold text-gray-900">Soil Analysis</h4>
-                                    <p class="text-sm text-gray-600">Professional analysis with AI</p>
+                                    <p class="text-sm text-gray-600">Professional analysis with scientific formulas</p>
                                 </div>
                             </div>
                             <div class="space-y-2">
@@ -5196,7 +5230,7 @@ ENHANCED_DASHBOARD_TEMPLATE = '''
                                 </div>
                                 <div class="flex items-center text-sm text-gray-700">
                                     <i class="fas fa-check text-green-500 mr-2"></i>
-                                    AI fertilizer recommendations
+                                    Evidence-based fertilizer recommendations
                                 </div>
                                 <div class="flex items-center text-sm text-gray-700">
                                     <i class="fas fa-check text-green-500 mr-2"></i>
@@ -5525,7 +5559,7 @@ ENHANCED_DASHBOARD_TEMPLATE = '''
                                     <span class="text-sm font-medium text-blue-800">Soil Analyses</span>
                                     <span class="text-2xl font-bold text-blue-600">{{ total_analyses }}</span>
                                 </div>
-                                <p class="text-xs text-blue-600 mt-1">Professional insights delivered</p>
+                                <p class="text-xs text-blue-600 mt-1">Scientific insights delivered</p>
                             </div>
                             <div class="bg-green-50 rounded-lg p-4">
                                 <div class="flex items-center justify-between">
@@ -5921,7 +5955,7 @@ ENHANCED_DASHBOARD_TEMPLATE = '''
     </style>
 </body>
 </html>
-'''                       
+'''               
 
 ENHANCED_SOIL_ANALYSIS_TEMPLATE = '''
 <!DOCTYPE html>
@@ -5991,7 +6025,7 @@ ENHANCED_SOIL_ANALYSIS_TEMPLATE = '''
                     Professional Soil Analysis
                 </h1>
                 <p class="text-xl text-gray-600 max-w-3xl mx-auto mb-6">
-                    Advanced soil fertility analysis with AI-powered fertilizer recommendations and scientific lime calculations
+                    Advanced soil fertility analysis with evidence-based fertilizer recommendations and scientific lime calculations
                 </p>
                 <div class="flex flex-wrap justify-center gap-4 text-sm">
                     <span class="inline-flex items-center px-3 py-1 rounded-full bg-green-100 text-green-800">
@@ -5999,11 +6033,11 @@ ENHANCED_SOIL_ANALYSIS_TEMPLATE = '''
                         Scientific Method: t/ha = 5 × ΔAE × ρb × d
                     </span>
                     <span class="inline-flex items-center px-3 py-1 rounded-full bg-blue-100 text-blue-800">
-                        <i class="fas fa-robot mr-2"></i>
-                        AI Multi-Nutrient Optimization
+                        <i class="fas fa-calculator mr-2"></i>
+                        Multi-Nutrient Mathematical Optimization
                     </span>
                     <span class="inline-flex items-center px-3 py-1 rounded-full bg-purple-100 text-purple-800">
-                        <i class="fas fa-calculator mr-2"></i>
+                        <i class="fas fa-chart-line mr-2"></i>
                         Complete Cost Analysis
                     </span>
                 </div>
@@ -6493,7 +6527,7 @@ ENHANCED_SOIL_ANALYSIS_TEMPLATE = '''
                                 </div>
                                 <div>
                                     <h3 class="text-lg font-semibold text-gray-900">Advanced Fertilization Targets</h3>
-                                    <p class="text-sm text-gray-600">AI optimization parameters</p>
+                                    <p class="text-sm text-gray-600">Scientific optimization parameters</p>
                                 </div>
                             </div>
                             <i id="advanced-icon" class="fas fa-chevron-down text-gray-400 transition-transform"></i>
@@ -6531,11 +6565,11 @@ ENHANCED_SOIL_ANALYSIS_TEMPLATE = '''
                 <button type="submit" id="submit-button" disabled
                         class="inline-flex items-center px-12 py-4 bg-gradient-to-r from-blue-600 via-purple-600 to-blue-700 text-white font-semibold text-lg rounded-xl shadow-lg hover:from-blue-700 hover:via-purple-700 hover:to-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed transition-all duration-300 transform hover:scale-105 disabled:hover:scale-100">
                     <i class="fas fa-rocket mr-3"></i>
-                    Analyze Soil with AI Intelligence
+                    Analyze Soil with Scientific Precision
                     <i class="fas fa-arrow-right ml-3"></i>
                 </button>
                 <p class="mt-4 text-sm text-gray-600 max-w-2xl mx-auto">
-                    🤖 AI-powered multi-nutrient optimization • 🧮 Scientific lime calculations • 💰 Complete cost analysis
+                    🧬 Evidence-based multi-nutrient optimization • 🧮 Scientific lime calculations • 💰 Complete cost analysis
                 </p>
             </div>
         </form>
@@ -7864,6 +7898,8 @@ ENHANCED_SOIL_ANALYSIS_RESULT_TEMPLATE = '''
             background-color: #f9fafb;
         }
     </style>
+    
+    
 </body>
 </html>
 '''
