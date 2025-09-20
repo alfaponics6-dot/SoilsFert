@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Payment - SoilsFert</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://js.stripe.com/v3/"></script>
+</head>
+<body class="bg-gradient-to-br from-slate-50 to-slate-100 min-h-screen">
+    <div class="max-w-md mx-auto pt-16 px-4">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <a href="/" class="inline-block">
+                <img src="{{ url_for('serve_logo') }}" alt="SoilsFert Logo" class="h-12 w-auto mx-auto mb-4">
+            </a>
+            <h1 class="text-2xl font-bold text-slate-900 mb-2">Secure Payment</h1>
+            <p class="text-slate-600">SoilsFert Pro Plan - $5.00 USD</p>
+        </div>
+
+        <!-- Payment Form -->
+        <div class="bg-white rounded-2xl shadow-xl border border-slate-200 p-6">
+            <form id="payment-form">
+                <div class="mb-6 space-y-4">
+                    <!-- Card Number -->
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">
+                            Card Number
+                        </label>
+                        <div id="card-number-element" class="p-3 border border-slate-300 rounded-lg min-h-[44px]">
+                            <!-- Card number element -->
+                        </div>
+                    </div>
+                    
+                    <!-- Expiry and CVC -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-2">
+                                Expiry Date
+                            </label>
+                            <div id="card-expiry-element" class="p-3 border border-slate-300 rounded-lg min-h-[44px]">
+                                <!-- Expiry element -->
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-2">
+                                CVV
+                            </label>
+                            <div id="card-cvc-element" class="p-3 border border-slate-300 rounded-lg min-h-[44px]">
+                                <!-- CVC element -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="card-errors" role="alert" class="text-red-600 text-sm mt-2"></div>
+                </div>
+
+                <button id="submit-button" 
+                        class="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white py-3 px-4 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-semibold flex items-center justify-center space-x-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                    </svg>
+                    <span id="button-text">Pay $5.00 Securely</span>
+                </button>
+
+                <div class="mt-4 text-center">
+                    <p class="text-xs text-slate-500">
+                        <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                        </svg>
+                        Secured by Stripe • SSL Encrypted
+                    </p>
+                </div>
+            </form>
+
+            <div class="mt-6 pt-4 border-t border-slate-200">
+                <a href="/pricing" 
+                   class="text-slate-600 hover:text-slate-800 text-sm font-medium flex items-center justify-center">
+                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                    </svg>
+                    Back to Pricing
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const stripe = Stripe('pk_test_51S2azWRc7RnjOJt7VaunYpNhTxwlFYT4KtE4C3gIybnFIY0YC9KE0XyW1AbasEUqG787ZZjN7TDGbPMoyYsB73Cy00Lr851Llv');
+        const elements = stripe.elements();
+
+        // Create separate card elements for clear CVV field
+        const cardNumberElement = elements.create('cardNumber', {
+            style: {
+                base: {
+                    fontSize: '16px',
+                    color: '#424770',
+                    '::placeholder': {
+                        color: '#aab7c4',
+                    },
+                },
+            },
+        });
+
+        const cardExpiryElement = elements.create('cardExpiry', {
+            style: {
+                base: {
+                    fontSize: '16px',
+                    color: '#424770',
+                    '::placeholder': {
+                        color: '#aab7c4',
+                    },
+                },
+            },
+        });
+
+        const cardCvcElement = elements.create('cardCvc', {
+            style: {
+                base: {
+                    fontSize: '16px',
+                    color: '#424770',
+                    '::placeholder': {
+                        color: '#aab7c4',
+                    },
+                },
+            },
+        });
+
+        cardNumberElement.mount('#card-number-element');
+        cardExpiryElement.mount('#card-expiry-element');
+        cardCvcElement.mount('#card-cvc-element');
+
+        // Handle form submission
+        const form = document.getElementById('payment-form');
+        const submitButton = document.getElementById('submit-button');
+        const buttonText = document.getElementById('button-text');
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            submitButton.disabled = true;
+            buttonText.textContent = 'Processing...';
+
+            try {
+                // Create payment intent
+                const response = await fetch('/stripe/create-payment-intent', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+
+                const {client_secret, error} = await response.json();
+
+                if (error) {
+                    throw new Error(error);
+                }
+
+                // Confirm payment with separate elements
+                const {error: stripeError, paymentIntent} = await stripe.confirmCardPayment(client_secret, {
+                    payment_method: {
+                        card: cardNumberElement,
+                    }
+                });
+
+                if (stripeError) {
+                    // Show error to customer
+                    document.getElementById('card-errors').textContent = stripeError.message;
+                    submitButton.disabled = false;
+                    buttonText.textContent = 'Pay $5.00 Securely';
+                } else {
+                    // Payment succeeded
+                    window.location.href = '/stripe/payment-success?payment_intent=' + paymentIntent.id;
+                }
+            } catch (error) {
+                document.getElementById('card-errors').textContent = error.message;
+                submitButton.disabled = false;
+                buttonText.textContent = 'Pay $5.00 Securely';
+            }
+        });
+
+        // Handle real-time validation errors from all card elements
+        [cardNumberElement, cardExpiryElement, cardCvcElement].forEach(element => {
+            element.on('change', ({error}) => {
+                const displayError = document.getElementById('card-errors');
+                if (error) {
+                    displayError.textContent = error.message;
+                } else {
+                    displayError.textContent = '';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
